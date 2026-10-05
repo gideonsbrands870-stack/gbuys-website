@@ -6,7 +6,8 @@
     "price": "39000",
     "description": "Sleek, comfortable and stylish black slides with a textured finish and statement logo detail. Perfect for everyday wear, casual outings and weekend looks.",
     "image": "assets/products/shoes-1791204146850.jpg",
-    "status": "available"
+    "status": "available",
+    "featured": true
   },
   {
     "id": "premium-black-slides-2",
@@ -15,7 +16,8 @@
     "price": "39000",
     "description": "A clean black slide designed for effortless everyday style and comfort. A versatile choice for casual outfits and relaxed outings.",
     "image": "assets/products/shoes-1791204231866.jpg",
-    "status": "available"
+    "status": "available",
+    "featured": true
   },
   {
     "id": "fitted-long-sleeve-tops",
@@ -24,6 +26,7 @@
     "price": "",
     "description": "Stylish fitted long-sleeve tops designed for a clean, comfortable everyday look. Available in multiple colours shown in the collection image. Contact G-buys to confirm your preferred colour, size and current price.",
     "image": "assets/gbuys-clothing-collection.jpg",
-    "status": "available"
+    "status": "available",
+    "featured": true
   }
 ]
