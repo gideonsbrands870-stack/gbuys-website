@@ -7,5 +7,14 @@
     "description": "Sleek, comfortable and stylish — these premium black slides are made to elevate your everyday look. 🖤✨",
     "image": "assets/products/shoes-1791204146850.jpg",
     "status": "available"
+  },
+  {
+    "id": "shoes",
+    "name": "Shoes",
+    "category": "Shoes",
+    "price": "39000",
+    "description": "Sleek, comfortable and stylish — these premium black slides are made to elevate your everyday look.",
+    "image": "assets/products/shoes-1791204231866.jpg",
+    "status": "available"
   }
 ]
