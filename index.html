@@ -55,47 +55,59 @@ footer{background:#090909;color:#aaa;padding:38px 0 85px}.foot{display:grid;grid
 <div class="mobileBottom"><a href="#shop"><span>🛒</span>Shop</a><a href="#categories"><span>☰</span>Categories</a><a href="https://wa.me/c/2348058945954" target="_blank"><span>💬</span>WhatsApp</a></div>
 <div class="drawer" id="drawer"><div class="drawerPanel"><div class="drawerHead"><h3>♥ Saved items</h3><button class="drawerClose" onclick="closeSaved()">×</button></div><div id="savedList"></div></div></div><div class="toast" id="toast">Saved</div><div class="modal" id="modal"><div class="modalBox"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <script>
-const WA="2348058945954";let products=[];let active="All";let query="";
+const WA="2348058945954";let products=[],active="All",query="";
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
-function money(v){if(v===null||v===undefined||v==="")return "Price on request";let s=String(v);if(/[₦N]/.test(s))return s;let n=Number(s);return Number.isFinite(n)?"₦"+n.toLocaleString("en-NG"):s;}
+function money(v){if(v===null||v===undefined||v==="")return "Price on request";const n=Number(v);return Number.isFinite(n)?"₦"+n.toLocaleString("en-NG"):String(v);}
 function orderUrl(p){return "https://wa.me/"+WA+"?text="+encodeURIComponent("Hello G-buys, I'm interested in "+p.name+" priced at "+money(p.price)+". Please confirm availability, size/colour and delivery.");}
 function categories(){return ["All",...new Set(products.map(p=>p.category).filter(Boolean))];}
 function setCategory(c){active=c;renderFilters();render();}
-function renderFilters(){let cats=categories();$("chips").innerHTML=cats.map(c=>'<button class="chip '+(c===active?"active":"")+'" onclick="setCategory(\''+esc(c).replace(/'/g,"\\'")+'\')">'+esc(c)+'</button>').join("");$("sideCats").innerHTML=cats.map(c=>'<button class="'+(c===active?"active":"")+'" onclick="setCategory(\''+esc(c).replace(/'/g,"\\'")+'\')">'+(c==="All"?"🛍️":"• ")+' '+esc(c)+'</button>').join("");let icons={Clothing:"👗",Shoes:"👟",Bags:"👜",Accessories:"💍",Gadgets:"🎧",Electronics:"📱",Wigs:"💇🏾‍♀️",Trending:"🔥"};$("categoryGrid").innerHTML=cats.filter(c=>c!=="All").map(c=>'<div class="cat" onclick="setCategory(\''+esc(c).replace(/'/g,"\\'")+'\');location.hash="shop""><div class="catIcon">'+(icons[c]||"🛍️")+'</div><b>'+esc(c)+'</b><span>'+products.filter(p=>p.category===c).length+' item'+(products.filter(p=>p.category===c).length===1?"":"s")+'</span></div>').join("")||'<div class="empty">Categories will appear as you add products.</div>';}
-function visible(){let q=query.toLowerCase();let list=products.filter(p=>(active==="All"||p.category===active)&&(!q||[p.name,p.category,p.description].join(" ").toLowerCase().includes(q)));let sort=$("sort").value;if(sort==="low")list.sort((a,b)=>(Number(a.price)||999999999)-(Number(b.price)||999999999));if(sort==="high")list.sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));if(sort==="az")list.sort((a,b)=>String(a.name).localeCompare(String(b.name)));return list;}
-function saleInfo(p){let old=Number(p.oldPrice),now=Number(p.price);return old>0&&now>0&&old>now?'<span class="saleOld">₦'+old.toLocaleString()+'</span>':''}
-function stockInfo(p){if(p.stock===0||p.status==="out-of-stock")return '<div class="stock out">Out of stock</div>';if(Number(p.stock)>0&&Number(p.stock)<=5)return '<div class="stock low">Only '+Number(p.stock)+' left</div>';if(Number(p.stock)>5)return '<div class="stock">In stock</div>';return '';}
+function renderFilters(){
+ const cats=categories();
+ $("chips").innerHTML=cats.map(c=>"<button class='chip "+(c===active?"active":"")+"' onclick='setCategory("+JSON.stringify(c)+")'>"+esc(c)+"</button>").join("");
+ $("sideCats").innerHTML=cats.map(c=>"<button class='"+(c===active?"active":"")+"' onclick='setCategory("+JSON.stringify(c)+")'>"+(c==="All"?"🛍️":"•")+" "+esc(c)+"</button>").join("");
+ const icons={Clothing:"👗",Shoes:"👟",Bags:"👜",Accessories:"💍",Gadgets:"🎧",Electronics:"📱",Wigs:"💇🏾‍♀️",Trending:"🔥"};
+ const real=cats.filter(c=>c!=="All");
+ $("categoryGrid").innerHTML=real.length?real.map(c=>"<div class='cat' onclick='setCategory("+JSON.stringify(c)+");location.hash="shop"'><div class='catIcon'>"+(icons[c]||"🛍️")+"</div><b>"+esc(c)+"</b><span>"+products.filter(p=>p.category===c).length+" item"+(products.filter(p=>p.category===c).length===1?"":"s")+"</span></div>").join(""):"<div class='empty'>Categories will appear as you add products.</div>";
+}
+function saleInfo(p){const old=Number(p.oldPrice),now=Number(p.price);return old>0&&now>0&&old>now?"<span class='saleOld'>₦"+old.toLocaleString()+"</span>":"";}
+function stockInfo(p){if(p.stock===0||p.status==="out-of-stock")return "<div class='stock out'>Out of stock</div>";if(Number(p.stock)>0&&Number(p.stock)<=5)return "<div class='stock low'>Only "+Number(p.stock)+" left</div>";if(Number(p.stock)>5)return "<div class='stock'>In stock</div>";return "";}
 function card(p){
-  let available=p.status==="available"&&p.stock!==0&&p.status!=="out-of-stock";
-  let safeId=String(p.id).replace(/'/g,"\\'");
-  let fresh=p.newArrival===true?' <span class="newBadge">NEW</span>':'';
-  return '<article class="product"><button class="wish" aria-label="Save product" onclick="toggleWish(\\''+safeId+'\\',this)">♡</button><div class="pic"><img src="'+esc(p.image||"assets/gbuys-logo.svg")+'" alt="'+esc(p.name)+'" loading="lazy"></div><div class="pbody"><span class="badge '+(available?"available":"soon")+'">'+(available?"Available":"Unavailable")+fresh+'</span><div class="pcat">'+esc(p.category||"G-buys")+'</div><h3>'+esc(p.name)+'</h3><div class="desc">'+esc(p.description||"Quality product from G-buys.")+'</div><div class="price '+(saleInfo(p)?'saleNow':'')+'">'+esc(money(p.price))+saleInfo(p)+'</div>'+stockInfo(p)+'<div class="pactions"><button class="pbtn" onclick="viewProduct(\\''+safeId+'\\')">View details</button><a class="pbtn order" href="'+orderUrl(p)+'" target="_blank" '+(available?'':'aria-disabled="true"')+'>Order</a></div></div></article>';
+ const available=p.status==="available"&&p.stock!==0&&p.status!=="out-of-stock";
+ const fresh=p.newArrival===true?" <span class='newBadge'>NEW</span>":"";
+ return "<article class='product'><button class='wish' aria-label='Save product' onclick='toggleWish("+JSON.stringify(String(p.id))+",this)'>♡</button><div class='pic'><img src='"+esc(p.image||"assets/gbuys-logo.svg")+"' alt='"+esc(p.name)+"' loading='lazy'></div><div class='pbody'><span class='badge "+(available?"available":"soon")+"'>"+(available?"Available":"Unavailable")+fresh+"</span><div class='pcat'>"+esc(p.category||"G-buys")+"</div><h3>"+esc(p.name)+"</h3><div class='desc'>"+esc(p.description||"Quality product from G-buys.")+"</div><div class='price "+(saleInfo(p)?"saleNow":"")+"'>"+esc(money(p.price))+saleInfo(p)+"</div>"+stockInfo(p)+"<div class='pactions'><button class='pbtn' onclick='viewProduct("+JSON.stringify(String(p.id))+")'>View details</button><a class='pbtn order' href='"+orderUrl(p)+"' target='_blank'>Order</a></div></div></article>";
 }
-function renderNew(){
-  let list=products.filter(p=>p.newArrival===true);
-  if(!list.length)list=products.slice().reverse().slice(0,4);
-  $("newGrid").innerHTML=list.length?list.map(card).join(""):'<div class="empty">New products will appear here as you add them.</div>';
-  restoreWish();
+function visible(){
+ const q=query.toLowerCase();
+ let list=products.filter(p=>(active==="All"||p.category===active)&&(!q||[p.name,p.category,p.description].join(" ").toLowerCase().includes(q)));
+ const s=$("sort").value;
+ if(s==="low")list.sort((a,b)=>(Number(a.price)||999999999)-(Number(b.price)||999999999));
+ if(s==="high")list.sort((a,b)=>(Number(b.price)||0)-(Number(a.price)||0));
+ if(s==="az")list.sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+ return list;
 }
-function renderFeatured(){
-  let list=products.filter(p=>p.featured!==false).slice(0,4);
-  $("featuredGrid").innerHTML=list.length?list.map(card).join(""):'<div class="empty">Featured products will appear here as you add them.</div>';
-  restoreWish();
+function render(){const list=visible();$("resultText").textContent=list.length+" product"+(list.length===1?"":"s")+(active!=="All"?" in "+active:"");$("productGrid").innerHTML=list.length?list.map(card).join(""):"<div class='empty'><div style='font-size:34px'>🔎</div><h3>No products found</h3><p>Try another search or category.</p></div>";restoreWish();}
+function renderNew(){let list=products.filter(p=>p.newArrival===true);if(!list.length)list=products.slice().reverse().slice(0,4);$("newGrid").innerHTML=list.length?list.map(card).join(""):"<div class='empty'>New products will appear here as you add them.</div>";restoreWish();}
+function renderFeatured(){let list=products.filter(p=>p.featured!==false).slice(0,4);$("featuredGrid").innerHTML=list.length?list.map(card).join(""):"<div class='empty'>Featured products will appear here as you add them.</div>";restoreWish();}
+function viewProduct(id){
+ const p=products.find(x=>String(x.id)===String(id));if(!p)return;
+ const available=p.status==="available"&&p.stock!==0&&p.status!=="out-of-stock";
+ let meta="";if(p.sizes)meta+="<span class='metaPill'>📏 Sizes: "+esc(p.sizes)+"</span>";if(p.colors)meta+="<span class='metaPill'>🎨 Colours: "+esc(p.colors)+"</span>";if(p.stock!==undefined&&p.stock!=="")meta+="<span class='metaPill'>📦 Stock: "+(Number(p.stock)===0?"Out of stock":esc(String(p.stock)))+"</span>";
+ $("modalContent").innerHTML="<div class='modalGrid'><img class='modalImg' src='"+esc(p.image||"assets/gbuys-logo.svg")+"' alt='"+esc(p.name)+"'><div class='modalInfo'><span class='badge "+(available?"available":"soon")+"'>"+(available?"Available":"Unavailable")+"</span><div class='pcat' style='margin-top:12px'>"+esc(p.category||"G-buys")+"</div><h2>"+esc(p.name)+"</h2><div class='modalPrice'>"+esc(money(p.price))+saleInfo(p)+"</div><div class='modalMeta'>"+meta+"</div><p>"+esc(p.description||"Contact G-buys for product details.")+"</p><a class='btn wa' href='"+orderUrl(p)+"' target='_blank'>💬 "+(available?"Order this product on WhatsApp":"Ask about this product")+"</a></div></div>";
+ $("modal").classList.add("open");
 }
-function render(){
-  let list=visible();
-  $("resultText").textContent=list.length+" product"+(list.length===1?"":"s")+(active!=="All"?" in "+active:"");
-  $("productGrid").innerHTML=list.length?list.map(card).join(""):'<div class="empty"><div style="font-size:34px">🔎</div><h3>No products found</h3><p>Try another search or category.</p></div>';
-  restoreWish();
-}
-function viewProduct(id){let p=products.find(x=>String(x.id)===String(id));if(!p)return;let available=p.status==="available"&&p.stock!==0&&p.status!=="out-of-stock";let meta='';if(p.sizes)meta+='<span class="metaPill">📏 Sizes: '+esc(p.sizes)+'</span>';if(p.colors)meta+='<span class="metaPill">🎨 Colours: '+esc(p.colors)+'</span>';if(p.stock!==undefined&&p.stock!=="")meta+='<span class="metaPill">📦 Stock: '+(Number(p.stock)===0?'Out of stock':esc(String(p.stock)))+'</span>';$("modalContent").innerHTML='<div class="modalGrid"><img class="modalImg" src="'+esc(p.image||"assets/gbuys-logo.svg")+'" alt="'+esc(p.name)+'"><div class="modalInfo"><span class="badge '+(available?"available":"soon")+'">'+(available?"Available":"Unavailable")+'</span><div class="pcat" style="margin-top:12px">'+esc(p.category||"G-buys")+'</div><h2>'+esc(p.name)+'</h2><div class="modalPrice">'+esc(money(p.price))+saleInfo(p)+'</div><div class="modalMeta">'+meta+'</div><p>'+esc(p.description||"Contact G-buys for product details.")+'</p><p><b>Next step:</b> Check the product details above, then contact G-buys on WhatsApp for delivery and final availability.</p><a class="btn wa" href="'+orderUrl(p)+'" target="_blank" '+(available?'':'aria-disabled="true"')+'>💬 '+(available?'Order this product on WhatsApp':'Ask about this product')+'</a></div></div>';$("modal").classList.add("open");}
 function closeModal(){$("modal").classList.remove("open");}
-$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-function updateSavedCount(){let n=JSON.parse(localStorage.getItem("gbuys_wishlist")||"[]").length;let e=$("savedCount");if(e)e.textContent="("+n+")";} function showToast(t){let e=$("toast");if(!e)return;e.textContent=t;e.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove("show"),1800);} function renderSaved(){let ids=JSON.parse(localStorage.getItem("gbuys_wishlist")||"[]");let list=ids.map(id=>products.find(p=>String(p.id)===String(id))).filter(Boolean);$("savedList").innerHTML=list.length?list.map(p=>'<div class="savedItem"><img src="'+esc(p.image||"assets/gbuys-logo.svg")+'" alt="'+esc(p.name)+'"><div><b>'+esc(p.name)+'</b><small>'+esc(money(p.price))+'</small><div class="savedActions"><button onclick="viewProduct(\''+p.id+'\')">Details</button><a href="'+orderUrl(p)+'" target="_blank">WhatsApp</a></div></div></div>').join(""):'<div class="empty">No saved items yet.<br><br>Tap ♡ on any product you like.</div>';updateSavedCount();} function openSaved(){renderSaved();$("drawer").classList.add("open");} function closeSaved(){$("drawer").classList.remove("open");} function focusSearch(){ $("search").focus(); document.getElementById("shop").scrollIntoView({behavior:"smooth"});}
-function toggleWish(id,btn){let w=JSON.parse(localStorage.getItem("gbuys_wishlist")||"[]");if(w.includes(id))w=w.filter(x=>x!==id);else w.push(id);localStorage.setItem("gbuys_wishlist",JSON.stringify(w));btn.classList.toggle("active",w.includes(id));btn.textContent=w.includes(id)?"♥":"♡";updateSavedCount();showToast(w.includes(id)?"Saved to your list":"Removed from saved items");if($("drawer").classList.contains("open"))renderSaved();}
-function restoreWish(){let w=JSON.parse(localStorage.getItem("gbuys_wishlist")||"[]");document.querySelectorAll(".wish").forEach((b,i)=>{let id=visible()[i]?.id;if(w.includes(id)){b.classList.add("active");b.textContent="♥";}});}
+function focusSearch(){$("search").focus();$("shop").scrollIntoView({behavior:"smooth"});}
+function getWishes(){return JSON.parse(localStorage.getItem("gbuys_wishlist")||"[]");}
+function updateSavedCount(){const e=$("savedCount");if(e)e.textContent="("+getWishes().length+")";}
+function showToast(t){const e=$("toast");if(!e)return;e.textContent=t;e.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>e.classList.remove("show"),1800);}
+function toggleWish(id,btn){let w=getWishes();if(w.includes(id))w=w.filter(x=>x!==id);else w.push(id);localStorage.setItem("gbuys_wishlist",JSON.stringify(w));btn.classList.toggle("active",w.includes(id));btn.textContent=w.includes(id)?"♥":"♡";updateSavedCount();showToast(w.includes(id)?"Saved to your list":"Removed from saved items");if($("drawer").classList.contains("open"))renderSaved();}
+function restoreWish(){const w=getWishes();document.querySelectorAll(".wish").forEach(b=>{const m=b.getAttribute("onclick")||"";const match=m.match(/toggleWish\(["']([^"']+)["']/);if(match&&w.includes(match[1])){b.classList.add("active");b.textContent="♥";}});updateSavedCount();}
+function renderSaved(){const list=getWishes().map(id=>products.find(p=>String(p.id)===String(id))).filter(Boolean);$("savedList").innerHTML=list.length?list.map(p=>"<div class='savedItem'><img src='"+esc(p.image||"assets/gbuys-logo.svg")+"' alt='"+esc(p.name)+"'><div><b>"+esc(p.name)+"</b><small>"+esc(money(p.price))+"</small><div class='savedActions'><button onclick='viewProduct("+JSON.stringify(String(p.id))+")'>Details</button><a href='"+orderUrl(p)+"' target='_blank'>WhatsApp</a></div></div></div>").join(""):"<div class='empty'>No saved items yet.<br><br>Tap ♡ on any product you like.</div>";updateSavedCount();}
+function openSaved(){renderSaved();$("drawer").classList.add("open");}
+function closeSaved(){$("drawer").classList.remove("open");}
+$("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeSaved();}});
 $("search").addEventListener("input",e=>{query=e.target.value;render();});$("sort").addEventListener("change",render);
-fetch("products.json?v="+Date.now()).then(r=>{if(!r.ok)throw Error();return r.json();}).then(d=>{products=Array.isArray(d)?d:[];renderFilters();render();renderNew();renderFeatured();updateSavedCount();}).catch(()=>{$("productGrid").innerHTML='<div class="empty"><h3>Products are temporarily unavailable</h3><p>Please use the WhatsApp Catalogue or try again shortly.</p></div>';});
+fetch("products.json?v="+Date.now()).then(r=>{if(!r.ok)throw Error("Products file unavailable");return r.json();}).then(d=>{products=Array.isArray(d)?d:[];renderFilters();render();renderNew();renderFeatured();}).catch(err=>{$("resultText").textContent="Products could not be loaded";$("productGrid").innerHTML="<div class='empty'><h3>Products are temporarily unavailable</h3><p>Please refresh the page. If the problem continues, use the WhatsApp Catalogue.</p></div>";console.error(err);});
 </script>
 </body></html>
