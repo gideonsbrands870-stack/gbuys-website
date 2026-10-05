@@ -16,5 +16,14 @@
     "description": "A clean black slide designed for effortless everyday style and comfort. A versatile choice for casual outfits and relaxed outings.",
     "image": "assets/products/shoes-1791204231866.jpg",
     "status": "available"
+  },
+  {
+    "id": "fitted-long-sleeve-tops",
+    "name": "Fitted Long-Sleeve Tops",
+    "category": "Clothing",
+    "price": "",
+    "description": "Stylish fitted long-sleeve tops designed for a clean, comfortable everyday look. Available in multiple colours shown in the collection image. Contact G-buys to confirm your preferred colour, size and current price.",
+    "image": "assets/gbuys-clothing-collection.jpg",
+    "status": "available"
   }
 ]
