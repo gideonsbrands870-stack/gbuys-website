@@ -1,0 +1,74 @@
+[
+  {
+    "id":"premium-fashion-slides",
+    "name":"Premium Fashion Slides",
+    "category":"Shoes",
+    "price":"₦23,000",
+    "description":"Step out in style with these premium fashion slides, designed for everyday comfort and a clean, stylish look.",
+    "image":"https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=85",
+    "status":"available"
+  },
+  {
+    "id":"elegant-womens-dress",
+    "name":"Elegant Women's Dress",
+    "category":"Clothing",
+    "price":"Coming soon",
+    "description":"A stylish and versatile dress for casual outings, lunch dates and everyday fashion.",
+    "image":"https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  },
+  {
+    "id":"fashion-bags-collection",
+    "name":"Fashion Bags Collection",
+    "category":"Bags",
+    "price":"Coming soon",
+    "description":"Stylish bags selected to complement everyday outfits and special occasions.",
+    "image":"assets/gbuys-bags.jpg",
+    "status":"coming-soon"
+  },
+  {
+    "id":"premium-human-hair-style-wig",
+    "name":"Premium Human-Hair Style Wig",
+    "category":"Wigs",
+    "price":"Coming soon",
+    "description":"A premium-looking wig style for a polished and confident finish.",
+    "image":"https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  },
+  {
+    "id":"wireless-bluetooth-earbuds",
+    "name":"Wireless Bluetooth Earbuds",
+    "category":"Gadgets",
+    "price":"Coming soon",
+    "description":"Compact wireless earbuds for music, calls and everyday use.",
+    "image":"https://images.unsplash.com/photo-1609592424849-1f6d4e3d2a13?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  },
+  {
+    "id":"20000mah-fast-charge-power-bank",
+    "name":"20,000mAh Fast-Charge Power Bank",
+    "category":"Gadgets",
+    "price":"Coming soon",
+    "description":"A high-capacity power bank for keeping your devices charged while you're on the move.",
+    "image":"https://images.unsplash.com/photo-1609592424774-9c7b8e5e4f2f?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  },
+  {
+    "id":"smart-fitness-watch",
+    "name":"Smart Fitness Watch",
+    "category":"Electronics",
+    "price":"Coming soon",
+    "description":"A modern smart watch concept for fitness, notifications and everyday convenience.",
+    "image":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  },
+  {
+    "id":"portable-bluetooth-speaker",
+    "name":"Portable Bluetooth Speaker",
+    "category":"Electronics",
+    "price":"Coming soon",
+    "description":"Portable audio for home, outings and everyday entertainment.",
+    "image":"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=85",
+    "status":"coming-soon"
+  }
+]
