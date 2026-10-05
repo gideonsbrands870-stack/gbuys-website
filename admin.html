@@ -48,7 +48,7 @@ async function setupOrLogin(){
     adminPassword.placeholder="Enter your password";
     loginBtn.textContent="Log in";
     resetLocalBtn.style.display="block";
-    if(sessionStorage.getItem(ADMIN_SESSION_KEY)==="1") enterAdmin();
+    
   }else{
     loginTitle.textContent="Create Admin Password";
     loginText.textContent="Create a password to protect the G-buys admin dashboard on this device.";
