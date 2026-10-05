@@ -1,19 +1,19 @@
 [
   {
-    "id": "shoes",
-    "name": "Shoes",
+    "id": "premium-black-slides-1",
+    "name": "Premium Black Designer-Style Slides",
     "category": "Shoes",
     "price": "39000",
-    "description": "Sleek, comfortable and stylish — these premium black slides are made to elevate your everyday look. 🖤✨",
+    "description": "Sleek, comfortable and stylish black slides with a textured finish and statement logo detail. Perfect for everyday wear, casual outings and weekend looks.",
     "image": "assets/products/shoes-1791204146850.jpg",
     "status": "available"
   },
   {
-    "id": "shoes",
-    "name": "Shoes",
+    "id": "premium-black-slides-2",
+    "name": "Premium Black Everyday Slides",
     "category": "Shoes",
     "price": "39000",
-    "description": "Sleek, comfortable and stylish — these premium black slides are made to elevate your everyday look.",
+    "description": "A clean black slide designed for effortless everyday style and comfort. A versatile choice for casual outfits and relaxed outings.",
     "image": "assets/products/shoes-1791204231866.jpg",
     "status": "available"
   }
