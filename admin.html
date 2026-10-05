@@ -1,9 +1,29 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>G-buys Admin</title><style>
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at top,#1a1a1a 0,#090909 55%)}.login-card{width:100%;max-width:430px;background:#151515;border:1px solid #292929;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.45)}.login-logo{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:25px;font-weight:900;color:var(--gold)}.login-card h1{text-align:center;margin-bottom:8px}.login-card .muted{text-align:center;margin-bottom:22px}.login-card .btn{width:100%;margin-top:12px}.login-note{font-size:11px;color:#888;text-align:center;margin-top:16px;line-height:1.5}
 :root{--gold:#f5b400;--bg:#090909;--card:#151515;--line:#292929;--muted:#aaa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:22px}.head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}.brand{font-size:24px;font-weight:900}.brand span{color:var(--gold)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px}h1,h2{margin-top:0}.muted{color:var(--muted);line-height:1.5}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}input,textarea,select{width:100%;background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font:inherit}textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:900;cursor:pointer}.gold{background:var(--gold);color:#111}.dark{background:#242424;color:#fff}.danger{background:#5d1e1e;color:#fff}.row{display:flex;gap:10px;flex-wrap:wrap}.status{padding:10px 12px;border-radius:10px;background:#111;border:1px solid #333;margin-top:10px}.product{display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid #292929}.product:last-child{border-bottom:0}.thumb{width:90px;height:90px;border-radius:10px;object-fit:cover;background:#222}.small{font-size:12px;color:#999}.danger-note{color:#ffb5b5}.hidden{display:none}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.product{grid-template-columns:65px 1fr}.thumb{width:65px;height:65px}.product .actions{grid-column:1/-1}}
-</style></head><body><div class="wrap">
-<div class="head"><div class="brand">G-<span>buys</span> Admin</div><a class="btn dark" href="./">View website</a></div>
+</style></head><body><div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">G</div>
+    <h1 id="loginTitle">G-buys Admin</h1>
+    <p id="loginText" class="muted">Create your admin password to protect this dashboard on this device.</p>
+    <div>
+      <label>Admin password</label>
+      <input id="adminPassword" type="password" autocomplete="new-password" placeholder="Create a password">
+    </div>
+    <div id="confirmWrap" style="margin-top:14px">
+      <label>Confirm password</label>
+      <input id="adminConfirm" type="password" autocomplete="new-password" placeholder="Repeat your password">
+    </div>
+    <button class="btn gold" id="loginBtn">Create password</button>
+    <button class="btn dark" id="resetLocalBtn" style="display:none">Reset this device</button>
+    <div id="loginMsg" class="status" style="display:none"></div>
+    <div class="login-note">This is a device-level convenience lock. Your GitHub token is still required for publishing changes and should remain private.</div>
+  </div>
+</div>
+<div id="app" class="wrap" style="display:none">
+<div class="head"><div class="brand">G-<span>buys</span> Admin</div><div class="row"><a class="btn dark" href="./">View website</a><button class="btn dark" id="logout">Log out</button></div></div>
 <div class="card"><h1>Product Manager</h1><p class="muted">Add, edit and remove products. Changes are published to the live website through your GitHub repository.</p>
 <div class="grid"><div class="full"><label>GitHub Personal Access Token</label><input id="token" type="password" placeholder="Paste your GitHub token here"><div class="small">For security, this dashboard does not contain your token. It stays only in this browser session.</div></div><div><label>Product name</label><input id="name" placeholder="e.g. Premium Handbag"></div><div><label>Category</label><select id="category"><option>Clothing</option><option>Shoes</option><option>Bags</option><option>Wigs</option><option>Accessories</option><option>Gadgets</option><option>Electronics</option><option>Trending</option></select></div><div><label>Price</label><input id="price" placeholder="e.g. ₦25,000 or Coming soon"></div><div><label>Status</label><select id="status"><option value="available">Available</option><option value="coming-soon">Coming soon</option></select></div><div class="full"><label>Description</label><textarea id="description" placeholder="Short product description"></textarea></div><div class="full"><label>Product image URL (optional)</label><input id="image" placeholder="https://... or assets/my-product.jpg"></div><div class="full"><label>Or choose an image from your phone</label><input id="imageFile" type="file" accept="image/*"><div class="small">Images are uploaded to your GitHub repository. Keep images reasonably small (about 2 MB or less).</div></div></div>
 <div class="row" style="margin-top:15px"><button class="btn gold" id="save">Add product</button><button class="btn dark" id="cancel">Cancel edit</button></div><div id="statusBox" class="status">Enter your GitHub token, then add or edit a product.</div></div>
@@ -11,6 +31,58 @@
 <div class="card"><h2>Important security note</h2><p class="muted danger-note">This admin page is public, but publishing requires your GitHub token. Never put a GitHub token into the website code or share it with anyone. If you think a token was exposed, revoke it in GitHub and create a new one.</p></div>
 </div>
 <script>
+
+const ADMIN_HASH_KEY="gbuys_admin_password_hash",ADMIN_SESSION_KEY="gbuys_admin_logged_in";
+const loginScreen=$("loginScreen"),app=$("app"),adminPassword=$("adminPassword"),adminConfirm=$("adminConfirm"),loginBtn=$("loginBtn"),loginMsg=$("loginMsg"),confirmWrap=$("confirmWrap"),loginTitle=$("loginTitle"),loginText=$("loginText"),resetLocalBtn=$("resetLocalBtn");
+async function hashText(value){const bytes=new TextEncoder().encode(value);const digest=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");}
+function showLoginMessage(t){loginMsg.textContent=t;loginMsg.style.display="block";}
+function enterAdmin(){loginScreen.style.display="none";app.style.display="block";}
+async function setupOrLogin(){
+  const hasHash=!!localStorage.getItem(ADMIN_HASH_KEY);
+  if(hasHash){
+    loginTitle.textContent="G-buys Admin Login";
+    loginText.textContent="Enter your admin password to continue.";
+    confirmWrap.style.display="none";
+    adminPassword.autocomplete="current-password";
+    adminPassword.placeholder="Enter your password";
+    loginBtn.textContent="Log in";
+    resetLocalBtn.style.display="block";
+    if(sessionStorage.getItem(ADMIN_SESSION_KEY)==="1") enterAdmin();
+  }else{
+    loginTitle.textContent="Create Admin Password";
+    loginText.textContent="Create a password to protect the G-buys admin dashboard on this device.";
+    confirmWrap.style.display="block";
+    loginBtn.textContent="Create password";
+  }
+}
+loginBtn.onclick=async()=>{
+  const p=adminPassword.value;
+  if(p.length<6){showLoginMessage("Please use a password with at least 6 characters.");return;}
+  const existing=localStorage.getItem(ADMIN_HASH_KEY);
+  if(!existing){
+    if(p!==adminConfirm.value){showLoginMessage("The passwords do not match.");return;}
+    localStorage.setItem(ADMIN_HASH_KEY,await hashText(p));
+    sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
+    showLoginMessage("Password created. Opening your admin dashboard...");
+    setTimeout(enterAdmin,300);
+  }else{
+    if(await hashText(p)!==existing){showLoginMessage("Incorrect password.");return;}
+    sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
+    enterAdmin();
+  }
+};
+adminPassword.addEventListener("keydown",e=>{if(e.key==="Enter")loginBtn.click();});
+adminConfirm.addEventListener("keydown",e=>{if(e.key==="Enter")loginBtn.click();});
+resetLocalBtn.onclick=()=>{
+  if(confirm("Reset the admin password on this device? You will need to create a new one.")){
+    localStorage.removeItem(ADMIN_HASH_KEY);
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    location.reload();
+  }
+};
+$("logout").onclick=()=>{sessionStorage.removeItem(ADMIN_SESSION_KEY);location.reload();};
+setupOrLogin();
+
 const OWNER="gideonsbrands870-stack",REPO="gbuys-website",BRANCH="main",PRODUCT_PATH="products.json";
 let products=[],editing=null;
 const $=id=>document.getElementById(id);
