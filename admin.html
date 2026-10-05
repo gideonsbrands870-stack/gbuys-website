@@ -1,104 +1,43 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>G-buys Admin</title><style>
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at top,#1a1a1a 0,#090909 55%)}.login-card{width:100%;max-width:430px;background:#151515;border:1px solid #292929;border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.45)}.login-logo{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;font-size:25px;font-weight:900;color:var(--gold)}.login-card h1{text-align:center;margin-bottom:8px}.login-card .muted{text-align:center;margin-bottom:22px}.login-card .btn{width:100%;margin-top:12px}.login-note{font-size:11px;color:#888;text-align:center;margin-top:16px;line-height:1.5}
-:root{--gold:#f5b400;--bg:#090909;--card:#151515;--line:#292929;--muted:#aaa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:22px}.head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}.brand{font-size:24px;font-weight:900}.brand span{color:var(--gold)}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:18px}h1,h2{margin-top:0}.muted{color:var(--muted);line-height:1.5}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}input,textarea,select{width:100%;background:#0d0d0d;color:#fff;border:1px solid #333;border-radius:10px;padding:12px;font:inherit}textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:900;cursor:pointer}.gold{background:var(--gold);color:#111}.dark{background:#242424;color:#fff}.danger{background:#5d1e1e;color:#fff}.row{display:flex;gap:10px;flex-wrap:wrap}.status{padding:10px 12px;border-radius:10px;background:#111;border:1px solid #333;margin-top:10px}.product{display:grid;grid-template-columns:90px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid #292929}.product:last-child{border-bottom:0}.thumb{width:90px;height:90px;border-radius:10px;object-fit:cover;background:#222}.small{font-size:12px;color:#999}.danger-note{color:#ffb5b5}.hidden{display:none}@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.product{grid-template-columns:65px 1fr}.thumb{width:65px;height:65px}.product .actions{grid-column:1/-1}}
-</style></head><body><div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="login-logo">G</div>
-    <h1 id="loginTitle">G-buys Admin</h1>
-    <p id="loginText" class="muted">Create your admin password to protect this dashboard on this device.</p>
-    <div>
-      <label>Admin password</label>
-      <input id="adminPassword" type="password" autocomplete="new-password" placeholder="Create a password">
-    </div>
-    <div id="confirmWrap" style="margin-top:14px">
-      <label>Confirm password</label>
-      <input id="adminConfirm" type="password" autocomplete="new-password" placeholder="Repeat your password">
-    </div>
-    <button class="btn gold" id="loginBtn">Create password</button>
-    <button class="btn dark" id="resetLocalBtn" style="display:none">Reset this device</button>
-    <div id="loginMsg" class="status" style="display:none"></div>
-    <div class="login-note">This is a device-level convenience lock. Your GitHub token is still required for publishing changes and should remain private.</div>
-  </div>
-</div>
-<div id="app" class="wrap" style="display:none">
-<div class="head"><div class="brand">G-<span>buys</span> Admin</div><div class="row"><a class="btn dark" href="./">View website</a><button class="btn dark" id="logout">Log out</button></div></div>
-<div class="card"><h1>Product Manager</h1><p class="muted">Add, edit and remove products. Changes are published to the live website through your GitHub repository.</p>
-<div class="grid"><div class="full"><label>GitHub Personal Access Token</label><input id="token" type="password" placeholder="Paste your GitHub token here"><div class="small">For security, this dashboard does not contain your token. It stays only in this browser session.</div></div><div><label>Product name</label><input id="name" placeholder="e.g. Premium Handbag"></div><div><label>Category</label><select id="category"><option>Clothing</option><option>Shoes</option><option>Bags</option><option>Wigs</option><option>Accessories</option><option>Gadgets</option><option>Electronics</option><option>Trending</option></select></div><div><label>Price</label><input id="price" placeholder="e.g. ₦25,000 or Coming soon"></div><div><label>Status</label><select id="status"><option value="available">Available</option><option value="coming-soon">Coming soon</option></select></div><div class="full"><label>Description</label><textarea id="description" placeholder="Short product description"></textarea></div><div class="full"><label>Product image URL (optional)</label><input id="image" placeholder="https://... or assets/my-product.jpg"></div><div class="full"><label>Or choose an image from your phone</label><input id="imageFile" type="file" accept="image/*"><div class="small">Images are uploaded to your GitHub repository. Keep images reasonably small (about 2 MB or less).</div></div></div>
-<div class="row" style="margin-top:15px"><button class="btn gold" id="save">Add product</button><button class="btn dark" id="cancel">Cancel edit</button></div><div id="statusBox" class="status">Enter your GitHub token, then add or edit a product.</div></div>
-<div class="card"><h2>Current products</h2><div id="list"></div></div>
-<div class="card"><h2>Important security note</h2><p class="muted danger-note">This admin page is public, but publishing requires your GitHub token. Never put a GitHub token into the website code or share it with anyone. If you think a token was exposed, revoke it in GitHub and create a new one.</p></div>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>G-buys Admin</title>
+<style>
+:root{--gold:#f5b400;--bg:#080808;--card:#141414;--line:#2b2b2b;--muted:#aaa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,Arial,sans-serif}.wrap{max-width:1100px;margin:auto;padding:20px}.login{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at top,#1d1d1d,#080808 60%)}.loginCard,.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}.loginCard{width:min(430px,100%)}.logo{width:62px;height:62px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:25px;font-weight:950;margin:auto}.muted{color:var(--muted);line-height:1.55}.head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}.brand{font-size:24px;font-weight:950}.brand span{color:var(--gold)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:13px;font-weight:850;margin-bottom:6px}input,textarea,select{width:100%;background:#0d0d0d;border:1px solid #383838;color:#fff;border-radius:10px;padding:12px;font:inherit}textarea{min-height:95px}.full{grid-column:1/-1}.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:900;cursor:pointer}.gold{background:var(--gold);color:#111}.dark{background:#252525;color:#fff}.danger{background:#672323;color:#fff}.row{display:flex;gap:9px;flex-wrap:wrap}.status{border:1px solid #333;background:#0d0d0d;border-radius:10px;padding:11px;margin-top:13px;color:#ddd}.small{font-size:12px;color:#888}.products{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.item{border:1px solid #2c2c2c;border-radius:15px;overflow:hidden;background:#101010}.item img{width:100%;height:180px;object-fit:cover;background:#222}.itemBody{padding:13px}.item h3{margin:4px 0;font-size:16px}.tag{color:var(--gold);font-size:11px;font-weight:900;text-transform:uppercase}.actions{margin-top:12px}.hidden{display:none}@media(max-width:700px){.grid,.products{grid-template-columns:1fr}.full{grid-column:auto}.head{align-items:flex-start}.head .row{justify-content:flex-end}}
+</style></head><body>
+<div id="login" class="login"><div class="loginCard"><div class="logo">G</div><h1 id="lt" style="text-align:center">G-buys Admin</h1><p id="lm" class="muted" style="text-align:center">Enter your admin password.</p><label>Password</label><input id="pw" type="password" autocomplete="current-password"><div id="confirmBox" style="margin-top:12px"><label>Confirm password</label><input id="pw2" type="password"></div><button id="loginBtn" class="btn gold" style="width:100%;margin-top:14px">Log in</button><button id="reset" class="btn dark" style="width:100%;margin-top:8px">Reset this device</button><div id="loginMsg" class="status" style="display:none"></div><p class="small" style="text-align:center">Device convenience lock only. Your GitHub token remains private and is required to publish.</p></div></div>
+<div id="app" class="wrap hidden">
+<div class="head"><div class="brand">G-<span>buys</span> Admin</div><div class="row"><a class="btn dark" href="./">View website</a><button id="logout" class="btn dark">Log out</button></div></div>
+<div class="card"><h1>Product Manager</h1><p class="muted">Add products without replacing older products. Edit or delete individual products. Every product you save becomes visible on the website with a photo, description, price and View Details button.</p>
+<div class="grid">
+<div class="full"><label>GitHub Personal Access Token</label><input id="token" type="password" placeholder="Paste your GitHub token"><div class="small">Stored only in this browser session. Never share it.</div></div>
+<div><label>Product name</label><input id="name" placeholder="e.g. Premium Cotton Shirt"></div>
+<div><label>Category</label><select id="category"><option>Clothing</option><option>Shoes</option><option>Bags</option><option>Wigs</option><option>Accessories</option><option>Gadgets</option><option>Electronics</option><option>Trending</option></select></div>
+<div><label>Price</label><input id="price" placeholder="e.g. 25000 or Coming soon"></div>
+<div><label>Status</label><select id="status"><option value="available">Available</option><option value="coming-soon">Coming soon</option></select></div>
+<div class="full"><label>Description</label><textarea id="description" placeholder="Write a clear product description"></textarea></div>
+<div class="full"><label>Image URL (optional)</label><input id="image" placeholder="https://... or assets/products/name.jpg"></div>
+<div class="full"><label>Or upload an image from your phone</label><input id="file" type="file" accept="image/*"><div class="small">Use a reasonably small image, ideally under 2.5 MB.</div></div>
+</div><div class="row" style="margin-top:15px"><button id="save" class="btn gold">Add product</button><button id="cancel" class="btn dark">Clear</button></div><div id="msg" class="status">Enter your token to load your current products.</div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><h2 style="margin-bottom:4px">Your products</h2><div class="small" id="count"></div></div><button id="refresh" class="btn dark">Refresh</button></div><div id="list" class="products" style="margin-top:15px"></div></div>
 </div>
 <script>
-
-const $=id=>document.getElementById(id);
-const ADMIN_HASH_KEY="gbuys_admin_password_hash",ADMIN_SESSION_KEY="gbuys_admin_logged_in";
-const loginScreen=$("loginScreen"),app=$("app"),adminPassword=$("adminPassword"),adminConfirm=$("adminConfirm"),loginBtn=$("loginBtn"),loginMsg=$("loginMsg"),confirmWrap=$("confirmWrap"),loginTitle=$("loginTitle"),loginText=$("loginText"),resetLocalBtn=$("resetLocalBtn");
-async function hashText(value){const bytes=new TextEncoder().encode(value);const digest=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");}
-function showLoginMessage(t){loginMsg.textContent=t;loginMsg.style.display="block";}
-function enterAdmin(){loginScreen.style.display="none";app.style.display="block";}
-async function setupOrLogin(){
-  const hasHash=!!localStorage.getItem(ADMIN_HASH_KEY);
-  if(hasHash){
-    loginTitle.textContent="G-buys Admin Login";
-    loginText.textContent="Enter your admin password to continue.";
-    confirmWrap.style.display="none";
-    adminPassword.autocomplete="current-password";
-    adminPassword.placeholder="Enter your password";
-    loginBtn.textContent="Log in";
-    resetLocalBtn.style.display="block";
-    
-  }else{
-    loginTitle.textContent="Create Admin Password";
-    loginText.textContent="Create a password to protect the G-buys admin dashboard on this device.";
-    confirmWrap.style.display="block";
-    loginBtn.textContent="Create password";
-  }
-}
-loginBtn.onclick=async()=>{
-  const p=adminPassword.value;
-  if(p.length<6){showLoginMessage("Please use a password with at least 6 characters.");return;}
-  const existing=localStorage.getItem(ADMIN_HASH_KEY);
-  if(!existing){
-    if(p!==adminConfirm.value){showLoginMessage("The passwords do not match.");return;}
-    localStorage.setItem(ADMIN_HASH_KEY,await hashText(p));
-    sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
-    showLoginMessage("Password created. Opening your admin dashboard...");
-    setTimeout(enterAdmin,300);
-  }else{
-    if(await hashText(p)!==existing){showLoginMessage("Incorrect password.");return;}
-    sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
-    enterAdmin();
-  }
-};
-adminPassword.addEventListener("keydown",e=>{if(e.key==="Enter")loginBtn.click();});
-adminConfirm.addEventListener("keydown",e=>{if(e.key==="Enter")loginBtn.click();});
-resetLocalBtn.onclick=()=>{
-  if(confirm("Reset the admin password on this device? You will need to create a new one.")){
-    localStorage.removeItem(ADMIN_HASH_KEY);
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
-    location.reload();
-  }
-};
-$("logout").onclick=()=>{sessionStorage.removeItem(ADMIN_SESSION_KEY);location.reload();};
-setupOrLogin();
-
-const OWNER="gideonsbrands870-stack",REPO="gbuys-website",BRANCH="main",PRODUCT_PATH="products.json";
-let products=[],editing=null;
-$("token").value=sessionStorage.getItem("gbuys_token")||"";
-$("token").addEventListener("input",()=>sessionStorage.setItem("gbuys_token",$("token").value.trim()));
-function msg(t,good=false){$("statusBox").textContent=t;$("statusBox").style.borderColor=good?"#5d4815":"#333";}
-function slug(s){return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60);}
-async function api(path,opts={}){const token=$("token").value.trim();if(!token)throw new Error("Please enter your GitHub token first.");const r=await fetch("https://api.github.com"+path,{...opts,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+token,...(opts.headers||{})}});const data=await r.json();if(!r.ok)throw new Error(data.message||"GitHub request failed");return data;}
-async function getProducts(){const r=await api("/repos/"+OWNER+"/"+REPO+"/contents/"+PRODUCT_PATH+"?ref="+BRANCH);const raw=atob(r.content.replace(/\n/g,""));return {data:JSON.parse(raw),sha:r.sha};}
-async function saveProducts(){const current=await getProducts();const body=btoa(unescape(encodeURIComponent(JSON.stringify(products,null,2))));await api("/repos/"+OWNER+"/"+REPO+"/contents/"+PRODUCT_PATH,{method:"PUT",body:JSON.stringify({message:"Update G-buys products",content:body,sha:current.sha,branch:BRANCH})});}
-async function uploadImage(file){const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");const path="assets/products/"+slug($("name").value)+"-"+Date.now()+"."+ext;const bytes=new Uint8Array(await file.arrayBuffer());let bin="";for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const data=btoa(bin);await api("/repos/"+OWNER+"/"+REPO+"/contents/"+path,{method:"PUT",body:JSON.stringify({message:"Add G-buys product image",content:data,branch:BRANCH})});return path;}
-function render(){const list=$("list");if(!products.length){list.innerHTML="<p class='muted'>No products yet.</p>";return}list.innerHTML=products.map(p=>`<div class="product"><img class="thumb" src="${p.image}" alt=""><div><b>${p.name}</b><div class="small">${p.category} • ${p.price} • ${p.status}</div><div class="small">${p.description||""}</div></div><div class="row actions"><button class="btn dark" onclick="editProduct('${p.id}')">Edit</button><button class="btn danger" onclick="deleteProduct('${p.id}')">Delete</button></div></div>`).join("");}
-function clearForm(){editing=null;["name","price","description","image"].forEach(id=>$(id).value="");$("category").value="Clothing";$("status").value="available";$("imageFile").value="";$("save").textContent="Add product";}
-window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;editing=id;$("name").value=p.name;$("category").value=p.category;$("price").value=p.price;$("description").value=p.description||"";$("image").value=p.image||"";$("status").value=p.status||"available";$("save").textContent="Save changes";scrollTo({top:0,behavior:"smooth"});};
-window.deleteProduct=async id=>{if(!confirm("Remove this product from the website?"))return;try{products=products.filter(p=>p.id!==id);await saveProducts();render();msg("Product removed. GitHub Pages will publish the change shortly.",true);}catch(e){msg(e.message);}};
-$("cancel").onclick=clearForm;
-$("save").onclick=async()=>{try{msg("Saving...");let image=$("image").value.trim();const file=$("imageFile").files[0];if(file){if(file.size>2.5*1024*1024)throw new Error("Please choose an image under about 2.5 MB.");image=await uploadImage(file);}if(!image)throw new Error("Please provide an image URL or choose an image.");const item={id:editing||slug($("name").value),name:$("name").value.trim(),category:$("category").value,price:$("price").value.trim(),description:$("description").value.trim(),image,status:$("status").value};if(!item.name||!item.price)throw new Error("Product name and price are required.");if(editing)products=products.map(p=>p.id===editing?item:p);else products.push(item);await saveProducts();render();clearForm();msg("Saved! The live website will update after GitHub Pages publishes the change.",true);}catch(e){msg(e.message);}};
-(async()=>{try{if($("token").value){const r=await getProducts();products=r.data;render();msg("Connected. You can manage your products.");}else msg("Enter your GitHub token to load your products.");}catch(e){msg(e.message);}})();
+const $=id=>document.getElementById(id),OWNER="gideonsbrands870-stack",REPO="gbuys-website",BRANCH="main";
+const HASH="gbuys_admin_password_hash",SESSION="gbuys_admin_logged_in";let products=[],editing=null;
+async function hash(v){const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function loginMsg(t){$("loginMsg").textContent=t;$("loginMsg").style.display="block"}
+function startLogin(){const has=!!localStorage.getItem(HASH);$("confirmBox").style.display=has?"none":"block";$("lt").textContent=has?"G-buys Admin Login":"Create Admin Password";$("lm").textContent=has?"Enter your admin password to continue.":"Create a password for this device.";$("loginBtn").textContent=has?"Log in":"Create password"}
+$("loginBtn").onclick=async()=>{const p=$("pw").value;if(p.length<6)return loginMsg("Password must be at least 6 characters.");const old=localStorage.getItem(HASH);if(!old){if(p!==$("pw2").value)return loginMsg("Passwords do not match.");localStorage.setItem(HASH,await hash(p));sessionStorage.setItem(SESSION,"1");$("login").classList.add("hidden");$("app").classList.remove("hidden")}else{if(await hash(p)!==old)return loginMsg("Incorrect password.");sessionStorage.setItem(SESSION,"1");$("login").classList.add("hidden");$("app").classList.remove("hidden")}};
+$("reset").onclick=()=>{if(confirm("Reset the admin password on this device?")){localStorage.removeItem(HASH);sessionStorage.removeItem(SESSION);location.reload()}};$("logout").onclick=()=>{sessionStorage.removeItem(SESSION);location.reload()};startLogin();
+$("token").value=sessionStorage.getItem("gbuys_token")||"";$("token").oninput=()=>sessionStorage.setItem("gbuys_token",$("token").value.trim());
+function message(t,ok=false){$("msg").textContent=t;$("msg").style.borderColor=ok?"#6b5417":"#333"}
+async function api(path,opt={}){const token=$("token").value.trim();if(!token)throw Error("Please enter your GitHub token first.");const r=await fetch("https://api.github.com"+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+token,...(opt.headers||{})}});const d=await r.json();if(!r.ok)throw Error(d.message||"GitHub request failed");return d}
+async function getProducts(){const r=await api("/repos/"+OWNER+"/"+REPO+"/contents/products.json?ref="+BRANCH);return {data:JSON.parse(atob(r.content.replace(/\n/g,""))),sha:r.sha}}
+async function saveRemote(next){const current=await getProducts();const body=btoa(unescape(encodeURIComponent(JSON.stringify(next,null,2))));await api("/repos/"+OWNER+"/"+REPO+"/contents/products.json",{method:"PUT",body:JSON.stringify({message:"Update G-buys products",content:body,sha:current.sha,branch:BRANCH})})}
+function makeId(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,45)+"-"+Date.now().toString(36)}
+async function upload(file){const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");const path="assets/products/"+makeId($("name").value)+"."+ext;const bytes=new Uint8Array(await file.arrayBuffer());let bin="";for(let i=0;i<bytes.length;i+=32768)bin+=String.fromCharCode(...bytes.subarray(i,i+32768));const content=btoa(bin);await api("/repos/"+OWNER+"/"+REPO+"/contents/"+path,{method:"PUT",body:JSON.stringify({message:"Add G-buys product image",content,branch:BRANCH})});return path}
+function render(){ $("count").textContent=products.length+" product"+(products.length===1?"":"s");$("list").innerHTML=products.length?products.map(p=>"<div class='item'><img src='"+p.image+"' alt=''><div class='itemBody'><div class='tag'>"+p.category+"</div><h3>"+p.name+"</h3><div class='small'>"+(p.price||"Price on request")+" • "+(p.status||"available")+"</div><p class='small'>"+(p.description||"")+"</p><div class='row actions'><button class='btn dark' onclick='edit(""+p.id+"")'>Edit</button><button class='btn danger' onclick='removeProduct(""+p.id+"")'>Delete</button></div></div></div>").join(""):"<p class='muted'>No products yet.</p>"}
+window.edit=id=>{const p=products.find(x=>x.id===id);if(!p)return;editing=id;$("name").value=p.name;$("category").value=p.category;$("price").value=p.price;$("description").value=p.description||"";$("image").value=p.image||"";$("status").value=p.status||"available";$("save").textContent="Save changes";scrollTo({top:0,behavior:"smooth"})};
+window.removeProduct=async id=>{if(!confirm("Delete this product from the website?"))return;try{message("Syncing and deleting...");const remote=await getProducts();const next=remote.data.filter(p=>p.id!==id);await saveRemote(next);products=next;render();message("Product deleted. Older products were preserved.",true)}catch(e){message(e.message)}};
+$("cancel").onclick=()=>{editing=null;["name","price","description","image"].forEach(id=>$(id).value="");$("file").value="";$("category").value="Clothing";$("status").value="available";$("save").textContent="Add product"};
+$("save").onclick=async()=>{try{message("Saving product...");let image=$("image").value.trim();const file=$("file").files[0];if(file){if(file.size>2.5*1024*1024)throw Error("Please choose an image under about 2.5 MB.");image=await upload(file)}if(!image)throw Error("Please provide an image or upload one.");const item={id:editing||makeId($("name").value),name:$("name").value.trim(),category:$("category").value,price:$("price").value.trim(),description:$("description").value.trim(),image,status:$("status").value};if(!item.name||!item.price)throw Error("Product name and price are required.");const remote=await getProducts();const next=editing?remote.data.map(p=>p.id===editing?item:p):[...remote.data,item];await saveRemote(next);products=next;render();$("cancel").click();message(editing?"Product updated without removing other products.":"Product added. It will appear on the website as its own product card.",true)}catch(e){message(e.message)}};
+async function refresh(){try{const r=await getProducts();products=r.data;render();message("Connected. "+products.length+" products loaded.",true)}catch(e){message(e.message)}}$("refresh").onclick=refresh;
+if(sessionStorage.getItem(SESSION)){ $("login").classList.add("hidden");$("app").classList.remove("hidden") } refresh();
 </script></body></html>
