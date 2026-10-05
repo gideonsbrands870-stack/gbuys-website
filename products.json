@@ -1,11 +1,11 @@
 [
   {
-    "id": "premium-fashion-slides",
-    "name": "Premium Fashion Slides",
+    "id": "shoes",
+    "name": "Shoes",
     "category": "Shoes",
-    "price": "23,000",
-    "description": "Step out in style with these premium fashion slides, designed for everyday comfort and a clean, stylish look. Perfect for casual outings and everyday wear. Available while stock lasts — contact G-buys to confirm your preferred size and availability.",
-    "image": "assets/products/premium-fashion-slides-1791192131449.jpg",
+    "price": "39000",
+    "description": "Sleek, comfortable and stylish — these premium black slides are made to elevate your everyday look. 🖤✨",
+    "image": "assets/products/shoes-1791204146850.jpg",
     "status": "available"
   }
 ]
