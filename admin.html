@@ -32,6 +32,7 @@
 </div>
 <script>
 
+const $=id=>document.getElementById(id);
 const ADMIN_HASH_KEY="gbuys_admin_password_hash",ADMIN_SESSION_KEY="gbuys_admin_logged_in";
 const loginScreen=$("loginScreen"),app=$("app"),adminPassword=$("adminPassword"),adminConfirm=$("adminConfirm"),loginBtn=$("loginBtn"),loginMsg=$("loginMsg"),confirmWrap=$("confirmWrap"),loginTitle=$("loginTitle"),loginText=$("loginText"),resetLocalBtn=$("resetLocalBtn");
 async function hashText(value){const bytes=new TextEncoder().encode(value);const digest=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");}
@@ -85,7 +86,6 @@ setupOrLogin();
 
 const OWNER="gideonsbrands870-stack",REPO="gbuys-website",BRANCH="main",PRODUCT_PATH="products.json";
 let products=[],editing=null;
-const $=id=>document.getElementById(id);
 $("token").value=sessionStorage.getItem("gbuys_token")||"";
 $("token").addEventListener("input",()=>sessionStorage.setItem("gbuys_token",$("token").value.trim()));
 function msg(t,good=false){$("statusBox").textContent=t;$("statusBox").style.borderColor=good?"#5d4815":"#333";}
