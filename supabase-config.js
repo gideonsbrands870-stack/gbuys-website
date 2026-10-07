@@ -1,1 +1,1 @@
-window.GBUYS_SUPABASE={url:"https://upqumqeaoeteazwnbwzq.supabase.co",key:"sb_publishable_u99epa4giYy2bwddiqYvdw_S5P58H5W5P58H5W"};
+window.GBUYS_SUPABASE={url:"https://upqumqeaoeteazwnbwzq.supabase.co",key:"sb_publishable_u99epa4giYy2bwddiqYvdw_S5P58H5W"};
