@@ -47,21 +47,118 @@
 </div></div>
 
 <script>
-let client; try { client=supabase.createClient(window.GBUYS_SUPABASE.url,window.GBUYS_SUPABASE.key); } catch(e) { document.getElementById("authMsg").textContent="The admin system did not load correctly. Please refresh this page once."; document.getElementById("authMsg").classList.remove("hidden"); console.error(e); } window.addEventListener("error",e=>{const box=document.getElementById("authMsg");if(box){box.textContent="Admin error: "+(e.message||"Please refresh the page.");box.classList.remove("hidden")}});
-const $=id=>document.getElementById(id);let editing=null;
+const SB=window.GBUYS_SUPABASE;
+const $=id=>document.getElementById(id);
+let token="",user=null,editing=null;
+
 function authMessage(t){$("authMsg").textContent=t;$("authMsg").classList.remove("hidden")}
 function message(t){$("msg").textContent=t}
-function showApp(){ $("login").classList.add("hidden");$("app").classList.remove("hidden");loadProducts() }
-function showLogin(){ $("login").classList.remove("hidden");$("app").classList.add("hidden") }
-async function isAdmin(){const {data:{user}}=await client.auth.getUser();if(!user)return false;const {data,error}=await client.from("admin_users").select("user_id").eq("user_id",user.id).maybeSingle();return !error&&!!data}
-$("signUp").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6)return authMessage("Enter an email and a password of at least 6 characters.");authMessage("Creating your admin account...");const {data,error}=await client.auth.signUp({email,password});if(error)return authMessage(error.message);if(data.session){const r=await client.from("admin_users").insert({user_id:data.user.id});if(r.error&&!r.error.message.includes("duplicate"))return authMessage(r.error.message);authMessage("Admin created. Opening dashboard...");showApp()}else authMessage("Account created. Check your email to confirm it, then return here and log in.");};
-$("signIn").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||!password)return authMessage("Enter your email and password.");authMessage("Signing in...");const {data,error}=await client.auth.signInWithPassword({email,password});if(error)return authMessage(error.message);if(!(await isAdmin())){const {data:{user}}=await client.auth.getUser();if(user){const boot=await client.from("admin_users").insert({user_id:user.id});if(!boot.error || boot.error.message.includes("duplicate")){if(await isAdmin())return showApp();}}await client.auth.signOut();return authMessage("This account is not an approved G-buys admin.");}showApp();};
-$("logout").onclick=async()=>{await client.auth.signOut();showLogin()};client.auth.onAuthStateChange(async(_event,session)=>{if(session&&await isAdmin())showApp()});
-async function loadProducts(){message("Loading products from the database...");const {data,error}=await client.from("products").select("*").order("created_at",{ascending:false});if(error){message("Could not load products: "+error.message);return} $("count").textContent=data.length+" product"+(data.length===1?"":"s");$("list").innerHTML=data.length?data.map(p=>{const price=p.price_label||p.price||"Contact for price";return "<div class='item'>"+(p.image_url?"<img src='"+p.image_url+"' alt=''>":"<div style='height:190px;background:#222'></div>")+"<div class='itemBody'><div class='tag'>"+p.category+"</div><h3>"+p.name+"</h3><div class='small'>"+price+" • "+p.status+(p.featured?" • Featured":"")+(p.new_arrival?" • New":"")+"</div><div class='small'>"+(p.description||"")+"</div><div class='row actions'><button class='btn dark' onclick='editProduct(""+p.id+"")'>Edit</button><button class='btn danger' onclick='deleteProduct(""+p.id+"")'>Delete</button></div></div></div>"}).join(""):"<div class='status' style='grid-column:1/-1'>No products yet. Add your first product above.</div>";message("Database connected. "+data.length+" products loaded.");}
-async function uploadImage(file){if(!file)return "";if(file.size>5*1024*1024)throw Error("Please choose an image under 5 MB.");const safe=(file.name||"product").toLowerCase().replace(/[^a-z0-9.]+/g,"-");const path=Date.now()+"-"+safe;const {error}=await client.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;const {data}=client.storage.from("product-images").getPublicUrl(path);return data.publicUrl}
-$("save").onclick=async()=>{try{message("Publishing product...");const file=$("image").files[0];let image=editing?editing.image_url:"";if(file)image=await uploadImage(file);if(!image)throw Error("Please choose a product image.");const payload={name:$("name").value.trim(),category:$("category").value,price:$("price").value.trim()||null,price_label:$("priceLabel").value.trim()||null,old_price:$("oldPrice").value.trim()||null,description:$("description").value.trim(),image_url:image,status:$("status").value,stock:$("stock").value===""?null:Number($("stock").value),sizes:$("sizes").value.trim()||null,colors:$("colors").value.trim()||null,featured:$("featured").value==="true",new_arrival:$("newArrival").value==="true"};if(!payload.name)throw Error("Product name is required.");if(editing){const {error}=await client.from("products").update(payload).eq("id",editing.id);if(error)throw error}else{const {error}=await client.from("products").insert(payload);if(error)throw error}clearForm();message("Product published successfully. It is now in the G-buys database.");loadProducts();}catch(e){message("Could not publish: "+e.message)}};
-window.editProduct=async id=>{const {data,error}=await client.from("products").select("*").eq("id",id).single();if(error)return message(error.message);editing=data;$("name").value=data.name;$("category").value=data.category;$("price").value=data.price||"";$("priceLabel").value=data.price_label||"";$("oldPrice").value=data.old_price||"";$("description").value=data.description||"";$("status").value=data.status;$("stock").value=data.stock??"";$("sizes").value=data.sizes||"";$("colors").value=data.colors||"";$("featured").value=data.featured?"true":"false";$("newArrival").value=data.new_arrival?"true":"false";$("save").textContent="Save changes";scrollTo({top:0,behavior:"smooth"})};
-window.deleteProduct=async id=>{if(!confirm("Delete this product?"))return;const {error}=await client.from("products").delete().eq("id",id);if(error)message(error.message);else{message("Product deleted.");loadProducts()}};
-function clearForm(){editing=null;["name","price","priceLabel","oldPrice","stock","sizes","colors","description"].forEach(id=>$(id).value="");$("image").value="";$("status").value="available";$("featured").value="true";$("newArrival").value="true";$("save").textContent="Publish product"}$("clear").onclick=clearForm;$("refresh").onclick=loadProducts;
-(async()=>{const ok=await isAdmin();if(ok)showApp();else showLogin()})();
+function headers(){return {"apikey":SB.key,"Authorization":"Bearer "+token,"Content-Type":"application/json"}}
+async function api(path,opts={}){const r=await fetch(SB.url+path,{...opts,headers:{...headers(),...(opts.headers||{})}});const txt=await r.text();let data=null;try{data=txt?JSON.parse(txt):null}catch{}if(!r.ok)throw Error(data?.msg||data?.message||data?.hint||txt||("Request failed ("+r.status+")"));return data}
+
+async function signUp(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||password.length<6)return authMessage("Enter your email and a password of at least 6 characters.");
+  authMessage("Creating your G-buys admin account...");
+  try{
+    const r=await fetch(SB.url+"/auth/v1/signup",{method:"POST",headers:{"apikey":SB.key,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw Error(d.msg||d.message||d.error_description||"Could not create the account.");
+    if(d.access_token){
+      token=d.access_token;user=d.user;
+      await bootstrapAdmin();
+      authMessage("Admin created successfully. Opening dashboard...");
+      showApp();
+    }else{
+      authMessage("Account created. Check your email to confirm it, then return here and tap Log in.");
+    }
+  }catch(e){authMessage("Could not create admin: "+e.message)}
+}
+
+async function login(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password)return authMessage("Enter your email and password.");
+  authMessage("Signing in...");
+  try{
+    const r=await fetch(SB.url+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"apikey":SB.key,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw Error(d.msg||d.message||d.error_description||"Login failed.");
+    token=d.access_token;user=d.user;
+    try{await bootstrapAdmin()}catch(e){}
+    if(!(await isAdmin())){token="";user=null;throw Error("This account is not approved as a G-buys admin.");}
+    showApp();
+  }catch(e){authMessage(e.message)}
+}
+
+async function bootstrapAdmin(){
+  if(!user?.id)return;
+  const r=await fetch(SB.url+"/rest/v1/admin_users",{method:"POST",headers:{...headers(),"Prefer":"return=minimal"},body:JSON.stringify({user_id:user.id})});
+  if(!r.ok){
+    const t=await r.text();
+    if(!t.includes("duplicate")&&!t.includes("already"))throw Error(t||"Admin setup failed.");
+  }
+}
+async function isAdmin(){
+  if(!token||!user?.id)return false;
+  const r=await fetch(SB.url+"/rest/v1/admin_users?select=user_id&user_id=eq."+encodeURIComponent(user.id)+"&limit=1",{headers:headers()});
+  if(!r.ok)return false;const d=await r.json();return Array.isArray(d)&&d.length>0;
+}
+function showApp(){$("login").classList.add("hidden");$("app").classList.remove("hidden");loadProducts()}
+function showLogin(){$("login").classList.remove("hidden");$("app").classList.add("hidden")}
+
+$("signUp").onclick=signUp;
+$("signIn").onclick=login;
+$("logout").onclick=()=>{token="";user=null;showLogin();authMessage("Logged out.")};
+
+async function loadProducts(){
+  message("Loading products from the database...");
+  try{
+    const data=await api("/rest/v1/products?select=*&order=created_at.desc");
+    $("count").textContent=data.length+" product"+(data.length===1?"":"s");
+    $("list").innerHTML=data.length?data.map(p=>"<div class='item'>"+(p.image_url?"<img src='"+p.image_url+"' alt=''>":"<div style='height:190px;background:#222'></div>")+"<div class='itemBody'><div class='tag'>"+p.category+"</div><h3>"+p.name+"</h3><div class='small'>"+(p.price_label||p.price||"Contact for price")+" • "+p.status+"</div><div class='small'>"+(p.description||"")+"</div><div class='row actions'><button class='btn dark' onclick='editProduct(\""+p.id+"\")'>Edit</button><button class='btn danger' onclick='deleteProduct(\""+p.id+"\")'>Delete</button></div></div></div>").join(""):"<div class='status' style='grid-column:1/-1'>No products yet. Add your first product above.</div>";
+    message("Database connected. "+data.length+" products loaded.");
+  }catch(e){message("Could not load products: "+e.message)}
+}
+
+async function uploadImage(file){
+  if(!file)return "";
+  if(file.size>5*1024*1024)throw Error("Please choose an image under 5 MB.");
+  const safe=(file.name||"product").toLowerCase().replace(/[^a-z0-9.]+/g,"-");
+  const path=Date.now()+"-"+safe;
+  const r=await fetch(SB.url+"/storage/v1/object/product-images/"+encodeURIComponent(path),{method:"POST",headers:{"apikey":SB.key,"Authorization":"Bearer "+token,"Content-Type":file.type,"x-upsert":"false"},body:file});
+  if(!r.ok)throw Error(await r.text());
+  return SB.url+"/storage/v1/object/public/product-images/"+path;
+}
+
+$("save").onclick=async()=>{
+ try{
+  message("Publishing product...");
+  const file=$("image").files[0];
+  let image=editing?editing.image_url:"";
+  if(file)image=await uploadImage(file);
+  if(!image)throw Error("Please choose a product image.");
+  const payload={name:$("name").value.trim(),category:$("category").value,price:$("price").value.trim()||null,price_label:$("priceLabel").value.trim()||null,old_price:$("oldPrice").value.trim()||null,description:$("description").value.trim(),image_url:image,status:$("status").value,stock:$("stock").value===""?null:Number($("stock").value),sizes:$("sizes").value.trim()||null,colors:$("colors").value.trim()||null,featured:$("featured").value==="true",new_arrival:$("newArrival").value==="true"};
+  if(!payload.name)throw Error("Product name is required.");
+  if(editing)await api("/rest/v1/products?id=eq."+encodeURIComponent(editing.id),{method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify(payload)});
+  else await api("/rest/v1/products",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(payload)});
+  clearForm();message("Product published successfully. It is now in the G-buys database.");loadProducts();
+ }catch(e){message("Could not publish: "+e.message)}
+};
+
+window.editProduct=async id=>{
+ try{
+  const data=await api("/rest/v1/products?id=eq."+encodeURIComponent(id)+"&select=*&limit=1");
+  if(!data.length)throw Error("Product not found.");
+  const p=data[0];editing=p;
+  $("name").value=p.name;$("category").value=p.category;$("price").value=p.price||"";$("priceLabel").value=p.price_label||"";$("oldPrice").value=p.old_price||"";$("description").value=p.description||"";$("status").value=p.status;$("stock").value=p.stock??"";$("sizes").value=p.sizes||"";$("colors").value=p.colors||"";$("featured").value=p.featured?"true":"false";$("newArrival").value=p.new_arrival?"true":"false";$("save").textContent="Save changes";scrollTo({top:0,behavior:"smooth"});
+ }catch(e){message(e.message)}
+};
+
+window.deleteProduct=async id=>{
+ if(!confirm("Delete this product?"))return;
+ try{await api("/rest/v1/products?id=eq."+encodeURIComponent(id),{method:"DELETE"});message("Product deleted.");loadProducts()}catch(e){message(e.message)}
+};
+
+function clearForm(){editing=null;["name","price","priceLabel","oldPrice","stock","sizes","colors","description"].forEach(id=>$(id).value="");$("image").value="";$("status").value="available";$("featured").value="true";$("newArrival").value="true";$("save").textContent="Publish product"}
+$("clear").onclick=clearForm;$("refresh").onclick=loadProducts;
 </script></body></html>
