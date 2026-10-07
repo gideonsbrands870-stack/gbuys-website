@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>G-buys Admin — Product Manager</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js'"></script>
 <script src="./supabase-config.js"></script>
 <style>
 :root{--gold:#f5b400;--bg:#080808;--card:#141414;--line:#2b2b2b;--muted:#aaa;--green:#25d366}
@@ -15,7 +15,7 @@
 <div id="authForm">
 <label>Email</label><input id="email" type="email" autocomplete="email" placeholder="Your admin email">
 <label style="margin-top:12px">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 6 characters">
-<div class="row" style="margin-top:14px"><button id="signIn" class="btn gold">Log in</button><button id="signUp" class="btn dark">Create admin</button></div>
+<div class="row" style="margin-top:14px"><button type="button" id="signIn" class="btn gold">Log in</button><button type="button" id="signUp" class="btn dark">Create admin</button></div>
 <div id="authMsg" class="status hidden"></div>
 </div></div></div>
 
@@ -47,7 +47,7 @@
 </div></div>
 
 <script>
-const client=supabase.createClient(window.GBUYS_SUPABASE.url,window.GBUYS_SUPABASE.key);
+let client; try { client=supabase.createClient(window.GBUYS_SUPABASE.url,window.GBUYS_SUPABASE.key); } catch(e) { document.getElementById("authMsg").textContent="The admin system did not load correctly. Please refresh this page once."; document.getElementById("authMsg").classList.remove("hidden"); console.error(e); } window.addEventListener("error",e=>{const box=document.getElementById("authMsg");if(box){box.textContent="Admin error: "+(e.message||"Please refresh the page.");box.classList.remove("hidden")}});
 const $=id=>document.getElementById(id);let editing=null;
 function authMessage(t){$("authMsg").textContent=t;$("authMsg").classList.remove("hidden")}
 function message(t){$("msg").textContent=t}
