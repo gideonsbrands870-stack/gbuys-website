@@ -130,7 +130,7 @@ const FALLBACK_PRODUCTS=[{"id":"premium-black-slides-1","name":"Premium Black De
     const db=supabase.createClient(window.GBUYS_SUPABASE.url,window.GBUYS_SUPABASE.key);
     const {data,error}=await db.from("products").select("*").order("created_at",{ascending:false});
     if(error) throw error;
-    if(Array.isArray(data)&&data.length){
+    if(Array.isArray(data)){
       products=data.map(p=>({
         id:p.id,name:p.name,category:p.category,
         price:p.price_label||p.price||"Contact for price",
